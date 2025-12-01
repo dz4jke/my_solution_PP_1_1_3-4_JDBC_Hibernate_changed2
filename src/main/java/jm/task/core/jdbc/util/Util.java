@@ -15,7 +15,7 @@ public class Util {
     private static final String URL = "jdbc:mysql://localhost:3306/kata_db";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
-    private final SessionFactory sessionFactory = buildSessionFactory();
+    private SessionFactory sessionFactory = getSessionFactory();
 
     static {
         try {
@@ -55,9 +55,12 @@ public class Util {
         }
     }
 
-    public SessionFactory getSessionFactory() {
+    public SessionFactory getSessionFactory()
+    {
+        if(sessionFactory == null){
+            sessionFactory = buildSessionFactory();
+        }
         return sessionFactory;
     }
-
 
 }
