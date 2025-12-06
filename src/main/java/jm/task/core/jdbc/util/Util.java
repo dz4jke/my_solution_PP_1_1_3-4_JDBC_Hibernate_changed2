@@ -36,29 +36,24 @@ public class Util {
         return connection;
     }
 
-    private SessionFactory buildSessionFactory() {
-        try {
-            // Создание конфигурации Hibernate для MySQL
-            return new Configuration()
-                    .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
-                    .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/kata_db")
-                    .setProperty("hibernate.connection.username", "root")
-                    .setProperty("hibernate.connection.password", "root")
-                    .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect")
-                    .setProperty("hibernate.show_sql", "true")
-                    .setProperty("hibernate.hbm2ddl.auto", "update")
-                    .addAnnotatedClass(User.class) // Указываем класс сущности
-                    .buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    public SessionFactory getSessionFactory()
-    {
-        if(sessionFactory == null){
-            sessionFactory = buildSessionFactory();
+    public SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                // Создание конфигурации Hibernate для MySQL
+                return new Configuration()
+                        .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
+                        .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/kata_db")
+                        .setProperty("hibernate.connection.username", "root")
+                        .setProperty("hibernate.connection.password", "root")
+                        .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect")
+                        .setProperty("hibernate.show_sql", "true")
+                        .setProperty("hibernate.hbm2ddl.auto", "update")
+                        .addAnnotatedClass(User.class) // Указываем класс сущности
+                        .buildSessionFactory();
+            } catch (Throwable ex) {
+                System.err.println("Initial SessionFactory creation failed." + ex);
+                throw new ExceptionInInitializerError(ex);
+            }
         }
         return sessionFactory;
     }

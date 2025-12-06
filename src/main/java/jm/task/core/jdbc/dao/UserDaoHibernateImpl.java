@@ -12,16 +12,22 @@ import java.util.List;
 public class UserDaoHibernateImpl implements UserDao {
     private final SessionFactory sessionFactory = new Util().getSessionFactory();
 
-    @Override
-    public void createUsersTable() {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            String sql = "CREATE TABLE IF NOT EXISTS users (" +
+    private static final String CREATE_TABLE_SQL =
+            "CREATE TABLE IF NOT EXISTS users (" +
                     "id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
                     "name VARCHAR(45), " +
                     "lastName VARCHAR(45), " +
                     "age TINYINT)";
-            session.createNativeQuery(sql).executeUpdate();
+
+    private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS users";
+    private static final String SELECT_ALL_USERS_HQL = "from User";
+    private static final String DELETE_ALL_USERS_HQL = "delete from User";
+
+    @Override
+    public void createUsersTable() {
+        try (Session session = sessionFactory.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.createNativeQuery(CREATE_TABLE_SQL).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             throw new RuntimeException("Failed to create users table", e);
@@ -32,8 +38,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void dropUsersTable() {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
-            String sql = "DROP TABLE IF EXISTS users";
-            session.createNativeQuery(sql).executeUpdate();
+            session.createNativeQuery(DROP_TABLE_SQL).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             throw new RuntimeException("Failed to drop users table", e);
@@ -43,33 +48,45 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            User user = new User(name, lastName, age);
-            session.save(user);
-            transaction.commit();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save user", e);
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                User user = new User(name, lastName, age);
+                session.save(user);
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw new RuntimeException("Failed to save user", e);
+            }
         }
     }
 
     @Override
     public void removeUserById(long id) {
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            User user = session.get(User.class, id);
-            if (user != null) {
-                session.delete(user);
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                User user = session.get(User.class, id);
+                if (user != null) {
+                    session.delete(user);
+                }
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw new RuntimeException("Failed to remove user by id: " + id, e);
             }
-            transaction.commit();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to remove user by id: " + id, e);
         }
     }
 
     @Override
     public List<User> getAllUsers() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from User", User.class).list();
+            return session.createQuery(SELECT_ALL_USERS_HQL, User.class).list();
         } catch (Exception e) {
             throw new RuntimeException("Failed to get all users", e);
         }
@@ -78,11 +95,18 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void cleanUsersTable() {
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-            session.createQuery("delete from User").executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to clean users table", e);
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+
+                session.createQuery(DELETE_ALL_USERS_HQL).executeUpdate();
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw new RuntimeException("Failed to clean users table", e);
+            }
         }
     }
 }
