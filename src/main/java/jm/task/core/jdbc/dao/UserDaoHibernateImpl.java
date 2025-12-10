@@ -47,9 +47,8 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = null;
-            try {
                 transaction = session.beginTransaction();
                 User user = new User(name, lastName, age);
                 session.save(user);
@@ -61,13 +60,11 @@ public class UserDaoHibernateImpl implements UserDao {
                 throw new RuntimeException("Failed to save user", e);
             }
         }
-    }
 
     @Override
     public void removeUserById(long id) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = null;
-            try {
                 transaction = session.beginTransaction();
                 User user = session.get(User.class, id);
                 if (user != null) {
@@ -81,7 +78,6 @@ public class UserDaoHibernateImpl implements UserDao {
                 throw new RuntimeException("Failed to remove user by id: " + id, e);
             }
         }
-    }
 
     @Override
     public List<User> getAllUsers() {
@@ -94,19 +90,16 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
+        Transaction transaction = null;
         try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = null;
-            try {
-                transaction = session.beginTransaction();
-
-                session.createQuery(DELETE_ALL_USERS_HQL).executeUpdate();
-                transaction.commit();
-            } catch (Exception e) {
-                if (transaction != null && transaction.isActive()) {
-                    transaction.rollback();
-                }
-                throw new RuntimeException("Failed to clean users table", e);
+            transaction = session.beginTransaction();
+            session.createQuery(DELETE_ALL_USERS_HQL).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
             }
+            throw new RuntimeException("Failed to clean users table", e);
         }
     }
 }
