@@ -39,7 +39,6 @@ public class Util {
     public SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
-                // Создание конфигурации Hibernate для MySQL
                 return new Configuration()
                         .setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
                         .setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/kata_db")
@@ -57,5 +56,4 @@ public class Util {
         }
         return sessionFactory;
     }
-
 }
