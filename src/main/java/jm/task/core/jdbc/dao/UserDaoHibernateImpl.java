@@ -1,5 +1,4 @@
 package jm.task.core.jdbc.dao;
-
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
@@ -9,14 +8,11 @@ import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
     private final SessionFactory sessionFactory = new Util().getSessionFactory();
-
-    private static final String CREATE_TABLE_SQL =
-            "CREATE TABLE IF NOT EXISTS users (" +
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS users (" +
                     "id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
                     "name VARCHAR(45), " +
                     "lastName VARCHAR(45), " +
                     "age TINYINT)";
-
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS users";
     private static final String SELECT_ALL_USERS_HQL = "from User";
     private static final String DELETE_ALL_USERS_HQL = "delete from User";

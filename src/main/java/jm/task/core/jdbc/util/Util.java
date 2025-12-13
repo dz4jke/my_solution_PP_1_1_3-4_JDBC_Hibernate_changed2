@@ -1,16 +1,12 @@
 package jm.task.core.jdbc.util;
-
 import jm.task.core.jdbc.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
 import java.sql.DriverManager;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class Util {
-
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String URL = "jdbc:mysql://localhost:3306/kata_db";
     private static final String USER = "root";

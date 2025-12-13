@@ -1,8 +1,6 @@
 package jm.task.core.jdbc.dao;
-
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-
 import java.util.List;
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,17 +12,11 @@ public class UserDaoJDBCImpl implements UserDao {
             "name VARCHAR(255) NOT NULL," +
             "lastName VARCHAR(255) NOT NULL," +
             "age TINYINT NOT NULL)";
-
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS users";
-
     private static final String INSERT_USER_SQL = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
-
     private static final String DELETE_USER_BY_ID_SQL = "DELETE FROM users WHERE id = ?";
-
     private static final String SELECT_ALL_USERS_SQL = "SELECT * FROM users";
-
     private static final String CLEAN_TABLE_SQL = "DELETE FROM users";
-
     private Connection connection;
 
     public UserDaoJDBCImpl() {

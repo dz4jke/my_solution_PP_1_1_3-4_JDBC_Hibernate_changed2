@@ -1,5 +1,4 @@
 package jm.task.core.jdbc.model;
-
 import javax.persistence.*;
 
 @Table(name = "users")
