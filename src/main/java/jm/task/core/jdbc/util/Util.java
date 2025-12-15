@@ -43,7 +43,7 @@ public class Util {
                         .setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect")
                         .setProperty("hibernate.show_sql", "true")
                         .setProperty("hibernate.hbm2ddl.auto", "update")
-                        .addAnnotatedClass(User.class) // Указываем класс сущности
+                        .addAnnotatedClass(User.class)
                         .buildSessionFactory();
             } catch (Throwable ex) {
                 System.err.println("Initial SessionFactory creation failed." + ex);
